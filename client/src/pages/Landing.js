@@ -1,7 +1,10 @@
+import Logo from "../components/Logo";
+import Wrapper from "../wrappers/LandingPage"
+
 const Landing = () => {
-    return <main>
+    return <Wrapper>
         <nav>
-            <h2 className="logo">Emprego</h2>
+            <Logo/>
         </nav>
 
         <div className="container page">
@@ -15,8 +18,10 @@ const Landing = () => {
                 </button>
             </div>
 
-            <img src="images/main.svg" alt="" className="img main-mg" />
+            <img src="images/main.svg" alt="" className="img main-img" />
         </div>
-    </main>;
+    </Wrapper>;
 };
+
+
 export default Landing;
