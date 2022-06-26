@@ -311,6 +311,10 @@ ul {
   color: var(--primary-500);
 }
 
+.text-danger {
+  color: #842029;
+}
+
 @media screen and (min-width: 992px) {
   .coffee-info {
     text-align: left;
