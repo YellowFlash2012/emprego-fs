@@ -13,13 +13,26 @@ router.post("/", async (req, res) => {
         throw new BadRequestError("Please provide all values");
     };
 
-    const existingUser = User.findOne({ email: email });
+    const existingUser = await User.findOne({ email: email });
 
     if (existingUser) {
-        throw new BadRequestError("Email is already is use!");
+        throw new BadRequestError("Email is already in use!");
 
         return;
     }
+
+    const newUser = await User.create({ name, email, password });
+    const token = newUser.createJWT();
+
+    res.status(StatusCodes.CREATED).json({
+        user: {
+            name: newUser.name,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            location: newUser.location,
+        },
+        token,
+    });
 });
 
 router.post("/login", async (req, res) => {
