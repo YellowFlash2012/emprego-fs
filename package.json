@@ -20,11 +20,14 @@
   },
   "homepage": "https://github.com/YellowFlash2012/emprego-fs#readme",
   "dependencies": {
+    "apicache": "^1.6.3",
+    "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
     "mongoose": "^6.4.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "validator": "^13.7.0"
   }
 }

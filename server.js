@@ -5,6 +5,8 @@ import { config } from "dotenv";
 import colors from "colors"
 
 import connectDB from "./config/db.js";
+import usersRoutes from "./routes/users.js";
+import jobsRoutes from "./routes/jobs.js";
 
 import notFoundRoute from "./middleware/notFoundRoute.js";
 import errorHandlerMiddleware from "./middleware/errorHandler.js";
@@ -12,6 +14,7 @@ import errorHandlerMiddleware from "./middleware/errorHandler.js";
 config()
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 app.use(express.json())
 app.use(helmet())
 
@@ -24,10 +27,12 @@ app.get("/", (req, res) => {
     res.send("Welcome!")
 })
 
+
+app.use("/api/v1/users", usersRoutes)
+app.use("/api/v1/jobs", jobsRoutes)
+
 app.use(notFoundRoute)
 app.use(errorHandlerMiddleware)
-
-const PORT = process.env.PORT || 5000;
 
 connectDB()
 app.listen(PORT, () => {
