@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+
 import InputAlert from "../components/Alert";
 import FormRow from "../components/FormRow";
 import Logo from "../components/Logo";
+import { useAppContext } from "../context/appContext";
 import Wrapper from "../wrappers/RegisterPage"
 
 const initialState = {
@@ -10,26 +11,42 @@ const initialState = {
     email: "",
     password: "",
     isMember: true,
-    showAlert:false
+    
 }
 
 const Register = () => {
     const [values, setValues] = useState(initialState);
 
+    const { isLoading, showAlert, displayAlert } = useAppContext();
+
     const toggleMember = () => {
         setValues({ ...values, isMember: !values.isMember });
     }
     
-    const handleChange=()=>{}
+    const handleChange = (e) => {
+        setValues({ ...values, [e.target.name]: e.target.value });
+    }
     
-    const authHandler = () => { }
+    const authHandler = (e) => {
+        e.preventDefault();
+        const { name, email, password, isMember } = values;
+
+        if (!email || !password||(!isMember&&!name)) {
+            displayAlert()
+
+            return;
+        }
+
+        console.log(values);
+    }
+
     return (
         <Wrapper className="full-page">
             <form className="form" onSubmit={authHandler}>
                 <Logo />
                 <h3>{values.isMember ? "Login" : "Register"}</h3>
 
-                {values.showAlert && <InputAlert />}
+                {showAlert && <InputAlert />}
 
                 {!values.isMember && (
                     <FormRow
@@ -54,7 +71,9 @@ const Register = () => {
                     handleChange={handleChange}
                 />
 
-                <button className="btn btn-block">Submit</button>
+                <button type="submit" className="btn btn-block">
+                    {values.isMember ? "Login" : "Register"}
+                </button>
 
                 <p>
 

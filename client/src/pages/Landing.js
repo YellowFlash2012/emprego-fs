@@ -18,7 +18,7 @@ const Landing = () => {
                 </button>
             </div>
 
-            <img src="images/main.svg" alt="" className="img main-img" />
+            <img src="images/main.svg" alt="" loading="lazy" className="img main-img" />
         </div>
     </Wrapper>;
 };
