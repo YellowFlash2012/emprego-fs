@@ -3,6 +3,7 @@ import morgan from "morgan"
 import helmet from "helmet"
 import { config } from "dotenv";
 import colors from "colors"
+import "express-async-errors"
 
 import connectDB from "./config/db.js";
 import usersRoutes from "./routes/users.js";
