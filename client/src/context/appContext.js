@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS } from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR } from "./actions";
 import reducer from "./reducer";
 
 
@@ -14,6 +14,7 @@ const initialState = {
     token: localStorage.getItem("token"),
     userLocation: localStorage.getItem("location") || "",
     jobLocation: localStorage.getItem("location") || "",
+    showSidebar:false
 };
 
 const AppContext = React.createContext();
@@ -109,9 +110,19 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const toggleSidebar = () => {
+        dispatch({type:TOGGLE_SIDEBAR})
+    }
+
+    const logoutUser = () => {
+        dispatch({ type: LOGOUT_USER });
+        removeUserFromLS()
+
+    }
+
     return (
         <AppContext.Provider
-            value={{ ...state, displayAlert, userRegistration, userLogin }}
+            value={{ ...state, displayAlert, userRegistration, userLogin, toggleSidebar, logoutUser }}
         >
             {children}
         </AppContext.Provider>

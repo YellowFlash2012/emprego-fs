@@ -139,6 +139,10 @@ ul {
   padding: 0;
 }
 
+.logo {
+  text-align: center;
+}
+
 .img {
   width: 100%;
   display: block;
