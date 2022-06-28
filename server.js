@@ -23,9 +23,9 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
-app.get("/", (req, res) => {
-    throw new Error("error")
+app.get("/api/v1", (req, res) => {
     res.send("Welcome!")
+    throw new Error("error")
 })
 
 

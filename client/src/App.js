@@ -4,6 +4,7 @@ import Error from "./pages/Error";
 import Register from "./pages/Register";
 
 import "antd/dist/antd.min.css";
+import Dashboard from "./pages/Dashboard";
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Register />} />
         
         <Route path="*" element={<Error/>} />
