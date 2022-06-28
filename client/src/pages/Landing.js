@@ -1,10 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { useAppContext } from "../context/appContext";
 import Wrapper from "../wrappers/LandingPage"
 
 const Landing = () => {
 
     const navigate = useNavigate();
+
+    const { user } = useAppContext();
+
+    if (user) {
+        return <Navigate to="/dashboard" replace/>
+    }
+    
     return <Wrapper>
         <nav>
             <Logo/>
