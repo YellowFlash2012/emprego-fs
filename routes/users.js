@@ -1,6 +1,6 @@
 import express from "express"
 import {StatusCodes} from "http-status-codes"
-import { BadRequestError } from "../errors/errors.js";
+import { BadRequestError, UnAuthenticatedError } from "../errors/errors.js";
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -36,7 +36,27 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    res.send("user login")
+    const { email, password } = req.body;
+
+    if (!email||!password) {
+        throw new BadRequestError("Please provide all values!")
+    }
+
+    const user = await User.findOne({ email })
+    
+    if (!user) {
+        throw new UnAuthenticatedError("Invalid credentials!")
+    }
+
+    const passwordMatch = await user.matchPassword(password);
+
+    if (!passwordMatch) {
+        throw new UnAuthenticatedError("Invalid credentials!");
+    }
+
+    const token = user.createJWT();
+
+    res.status(StatusCodes.OK).json({user:{email:user.email}, token})
 })
 
 // @desc    Put update a user
