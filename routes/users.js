@@ -56,7 +56,7 @@ router.post("/login", async (req, res) => {
 
     const token = user.createJWT();
 
-    res.status(StatusCodes.OK).json({user:{email:user.email}, token})
+    res.status(StatusCodes.OK).json({user:{email:user.email, name:user.name}, token})
 })
 
 // @desc    Put update a user

@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { CLEAR_ALERT, DISPLAY_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS } from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS } from "./actions";
 import reducer from "./reducer";
 
 
@@ -57,6 +57,11 @@ const AppProvider = ({ children }) => {
 
             addUserToLS({ user, token, location });
 
+            dispatch({
+                type: LOGIN_USER_SUCCESS,
+                payload: { user, token },
+            });
+
             message.success(`Thank you for creating an account ${user.name}`)
 
             setTimeout(() => {
@@ -72,9 +77,41 @@ const AppProvider = ({ children }) => {
         }
     }
 
+    const userLogin = async(currentUser) => {
+        dispatch({ type: LOGIN_USER_BEGIN });
+
+        try {
+            const {data} = await axios.post("/api/v1/users/login", currentUser);
+
+            const { user, token} = data;
+
+            dispatch({
+                type: LOGIN_USER_SUCCESS,
+                payload: { user, token },
+            });
+
+            addUserToLS({ user, token });
+
+            message.success(`Welcome back, ${user.name}`);
+
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 5000);
+        } catch (error) {
+            console.log(error.response);
+
+            dispatch({
+                type: LOGIN_USER_FAIL,
+                payload: { msg: error.response.data.msg },
+            });
+
+            message.error(error.response.data.msg);
+        }
+    }
+
     return (
         <AppContext.Provider
-            value={{ ...state, displayAlert, userRegistration }}
+            value={{ ...state, displayAlert, userRegistration, userLogin }}
         >
             {children}
         </AppContext.Provider>
