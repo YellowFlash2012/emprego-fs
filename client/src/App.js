@@ -5,6 +5,11 @@ import Register from "./pages/Register";
 
 import "antd/dist/antd.min.css";
 import Dashboard from "./pages/Dashboard";
+import Stats from "./pages/dashboard/Stats";
+import AllJobs from "./pages/dashboard/AllJobs";
+import AddNewJob from "./pages/dashboard/AddNewJob";
+import Profile from "./pages/dashboard/Profile";
+import SharedLayout from "./pages/dashboard/SharedLayout";
 
 
 function App() {
@@ -12,7 +17,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route path="/dashboard" element={<SharedLayout/>}>
+          <Route index element={<Stats/>}/>
+          <Route path="all-jobs" element={<AllJobs/>}/>
+          <Route path="add-new-job" element={<AddNewJob/>}/>
+          <Route path="profile" element={<Profile/>}/>
+        </Route>
+
         <Route path="/register" element={<Register />} />
         
         <Route path="*" element={<Error/>} />
