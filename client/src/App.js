@@ -10,6 +10,7 @@ import AllJobs from "./pages/dashboard/AllJobs";
 import AddNewJob from "./pages/dashboard/AddNewJob";
 import Profile from "./pages/dashboard/Profile";
 import SharedLayout from "./pages/dashboard/SharedLayout";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 
 function App() {
@@ -18,7 +19,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
 
-        <Route path="/dashboard" element={<SharedLayout/>}>
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+
+            <SharedLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Stats/>}/>
           <Route path="all-jobs" element={<AllJobs/>}/>
           <Route path="add-new-job" element={<AddNewJob/>}/>
