@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR } from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
 import reducer from "./reducer";
 
 
@@ -120,9 +120,39 @@ const AppProvider = ({ children }) => {
 
     }
 
+    const updateUser = async (currentUser) => {
+        dispatch({ type: UPDATE_USER_BEGIN })
+        try {
+            const { data } = axios.put("/api/v1/users", currentUser, {
+                headers: {
+                    AUthorization: `Bearer ${state.token}`
+                }
+            })
+
+            const { user, location, token } = data;
+            
+            dispatch({ type: UPDATE_USER_SUCCESS, payload: { user, token, location } });
+
+            addUserToLS({ user, token, location });
+
+            message.success(`${user.name} was successfully updated!`)
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+
+            if (error.response.status === 401) {
+                logoutUser()
+            };
+            
+            dispatch({ type: UPDATE_USER_FAIL, payload: { msg: error.response.data.msg } });
+
+            message.error(error.response.data.msg);
+        };
+    };
+
     return (
         <AppContext.Provider
-            value={{ ...state, displayAlert, userRegistration, userLogin, toggleSidebar, logoutUser }}
+            value={{ ...state, displayAlert, userRegistration, userLogin, toggleSidebar, logoutUser, updateUser }}
         >
             {children}
         </AppContext.Provider>

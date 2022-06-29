@@ -19,7 +19,6 @@ router.post("/", async (req, res) => {
     if (existingUser) {
         throw new BadRequestError("Email is already in use!");
 
-        return;
     }
 
     const newUser = await User.create({ name, email, password });
@@ -28,11 +27,12 @@ router.post("/", async (req, res) => {
     res.status(StatusCodes.CREATED).json({
         user: {
             name: newUser.name,
-            lastName: newUser.lastName,
             email: newUser.email,
+            lastName: newUser.lastName,
             location: newUser.location,
         },
         token,
+        location: newUser.location,
     });
 });
 
