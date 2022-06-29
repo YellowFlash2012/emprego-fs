@@ -11,6 +11,7 @@ import jobsRoutes from "./routes/jobs.js";
 
 import notFoundRoute from "./middleware/notFoundRoute.js";
 import errorHandlerMiddleware from "./middleware/errorHandler.js";
+import protect from "./middleware/auth.js";
 
 config()
 
@@ -30,7 +31,7 @@ app.get("/api/v1", (req, res) => {
 
 
 app.use("/api/v1/users", usersRoutes)
-app.use("/api/v1/jobs", jobsRoutes)
+app.use("/api/v1/jobs", protect, jobsRoutes)
 
 app.use(notFoundRoute)
 app.use(errorHandlerMiddleware)

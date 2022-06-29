@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Navigate} from "react-router-dom"
 
 import InputAlert from "../components/Alert";
 import FormRow from "../components/FormRow";
@@ -18,11 +19,15 @@ const initialState = {
 const Register = () => {
     const [values, setValues] = useState(initialState);
 
-    const { isLoading, showAlert, displayAlert, userRegistration,userLogin } =
+    const { isLoading, showAlert, displayAlert, userRegistration,userLogin, user } =
         useAppContext();
 
     const toggleMember = () => {
         setValues({ ...values, isMember: !values.isMember });
+    }
+
+    if (user) {
+        return <Navigate to="/dashboard" replace />
     }
     
     const handleChange = (e) => {

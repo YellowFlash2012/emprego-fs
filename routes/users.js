@@ -1,6 +1,7 @@
 import express from "express"
 import {StatusCodes} from "http-status-codes"
 import { BadRequestError, UnAuthenticatedError } from "../errors/errors.js";
+import protect from "../middleware/auth.js";
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -62,7 +63,8 @@ router.post("/login", async (req, res) => {
 // @desc    Put update a user
 // @route   Put /api/v1/users/:id
 // @access  Private
-router.put("/", async (req, res) => {
+router.put("/", protect, async (req, res) => {
+    console.log(req.user);
     res.send("user update")
 })
 
