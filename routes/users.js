@@ -64,8 +64,27 @@ router.post("/login", async (req, res) => {
 // @route   Put /api/v1/users/:id
 // @access  Private
 router.put("/", protect, async (req, res) => {
-    console.log(req.user);
-    res.send("user update")
+    const { name, email, lastName, location } = req.body;
+
+    if (!email || !name||!lastName||!location) {
+        throw new BadRequestError("Please provide all values!");
+    }
+    
+    // const user = User.findOne({ _id: req.user });
+    // user.email = email;
+    // user.name = name;
+    // user.lastName = lastName;
+    // user.location = location;
+
+    const updatedUser = await User.findByIdAndUpdate(req.user, req.body, {
+        new: true,
+    });
+
+    
+    res.status(StatusCodes.OK).json({
+        user: { email: updatedUser.email, name: updatedUser.name },
+        location: updatedUser.location,
+    });
 })
 
 export default router
