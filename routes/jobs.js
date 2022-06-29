@@ -1,5 +1,9 @@
 import express from "express";
 import apicache from "apicache";
+import { BadRequestError } from "../errors/errors.js";
+import Job from "../models/Job.js";
+import { StatusCodes } from "http-status-codes";
+
 
 
 
@@ -10,7 +14,17 @@ let cache = apicache.middleware;
 // @route   POST /api/v1/jobs
 // @access  Private
 router.post("/", async (req, res) => {
-    res.send("add new job")
+    const { company, position } = req.body;
+
+    if (!position||!company) {
+        throw new BadRequestError("Please enter a value for those fields")
+    };
+
+    req.body.createdBy = req.user;
+
+    const job = await Job.create(req.body);
+
+    res.status(StatusCodes.CREATED).send({ job });
 })
 
 // @desc    Get get all job applications
