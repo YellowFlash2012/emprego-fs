@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
 import reducer from "./reducer";
 
 
@@ -14,7 +14,17 @@ const initialState = {
     token: localStorage.getItem("token"),
     userLocation: localStorage.getItem("location") || "",
     jobLocation: localStorage.getItem("location") || "",
-    showSidebar:false
+    showSidebar: false,
+
+    // ***related to job posts***
+    isEditing: false,
+    editJobIt: "",
+    position: "",
+    company: "",
+    jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+    jobType: "full-time",
+    statusOptions: ["interview", "pending", "declined"],
+    status:"pending"
 };
 
 const AppContext = React.createContext();
@@ -123,9 +133,9 @@ const AppProvider = ({ children }) => {
     const updateUser = async (currentUser) => {
         dispatch({ type: UPDATE_USER_BEGIN })
         try {
-            const { data } = axios.put("/api/v1/users", currentUser, {
+            const { data } = await axios.put("/api/v1/users", currentUser, {
                 headers: {
-                    AUthorization: `Bearer ${state.token}`
+                    Authorization: `Bearer ${state.token}`
                 }
             })
 
@@ -150,9 +160,73 @@ const AppProvider = ({ children }) => {
         };
     };
 
+    const newJobHandleChange = ({ name, value }) => {
+        dispatch({ type: ADD_JOB_HANDLE_CHANGE, payload: { name, value } });
+    };
+
+    const clearAddJobValues = () => {
+        dispatch({type:CLEAR_ADD_JOB_VALUES})
+    }
+
+    const addNewJob = async () => {
+        dispatch({ type: ADD_JOB_BEGIN });
+        try {
+            const { position, company, status, jobType, jobLocation } = state;
+
+            await axios.post(
+                "/api/v1/jobs",
+                {position,
+                company,
+                status,
+                jobType,
+                jobLocation},
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`,
+                    },
+                }
+            );
+
+            dispatch({
+                type: ADD_JOB_SUCCESS,
+                
+            });
+
+            dispatch({type:CLEAR_ADD_JOB_VALUES})
+
+            message.success("Congratulations on applying for a new job");
+            
+        } catch (error) {
+            console.error(error);
+
+            if (error.response.status === 401) {
+                logoutUser();
+            }
+
+            dispatch({
+                type: ADD_JOB_FAIL,
+                payload: { msg: error.response.data.msg },
+            });
+
+            message.error(error.response.data.msg);
+        }
+        clearAlert()
+    };
+
     return (
         <AppContext.Provider
-            value={{ ...state, displayAlert, userRegistration, userLogin, toggleSidebar, logoutUser, updateUser }}
+            value={{
+                ...state,
+                displayAlert,
+                userRegistration,
+                userLogin,
+                toggleSidebar,
+                logoutUser,
+                updateUser,
+                newJobHandleChange,
+                clearAddJobValues,
+                addNewJob,
+            }}
         >
             {children}
         </AppContext.Provider>
