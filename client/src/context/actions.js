@@ -29,4 +29,4 @@ export const GET_ALL_JOBS_BEGIN = "GET_ALL_JOBS_BEGIN";
 export const GET_ALL_JOBS_SUCCESS = "GET_ALL_JOBS_SUCCESS";
 export const GET_ALL_JOBS_FAIL = "GET_ALL_JOBS_FAIL";
 
-export const EDIT_JOB = "EDIT_JOB";
+export const SET_EDIT_JOB = "SET_EDIT_JOB";

@@ -1,6 +1,6 @@
 import express from "express";
 import apicache from "apicache";
-import { BadRequestError } from "../errors/errors.js";
+import { BadRequestError, UnAuthenticatedError } from "../errors/errors.js";
 import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 
@@ -51,15 +51,35 @@ router.get("/:id", async (req, res) => {
 // @desc    Put update a job application
 // @route   PUT /api/v1/jobs/:id
 // @access  Private
-router.put("/:id", async (req, res) => {
-    res.send("update a job")
+router.put("/:id", async (req, res, next) => {
+    const { id } = req.params;
+    const { company, position } = req.body;
+
+    if (!position || !company) {
+        throw new BadRequestError("Please enter a value for those fields");
+    }
+
+    const job = await Job.findById(id);
+
+    // check permission
+    if (req.user===job.createdBy.toString()) {
+        next();
+    } else {
+        throw new UnAuthenticatedError("Not authorized to access this resource");
+    };
+
+    const updatedJob = await Job.findOneAndUpdate({ _id: id }, req.body, { new: true, runValidators: true });
+    
+    res.status(StatusCodes.OK).json({updatedJob});
 })
 
 // @desc    Delete delete a job application
 // @route   DELETE /api/v1/jobs/:id
 // @access  Private
 router.delete("/:id", async (req, res) => {
-    res.send("delete a job")
+    await Job.findByIdAndRemove(req.params.id);
+
+    res.status(StatusCodes.OK).json({msg:"Job successfully deleted!"})
 })
 
 
