@@ -1,4 +1,4 @@
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
 import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
@@ -95,6 +95,30 @@ const reducer = (state, action) => {
 
     if (action.type === ADD_JOB_FAIL) {
         return { ...state, isLoading: false };
+    }
+
+    if (action.type === GET_ALL_JOBS_BEGIN ) {
+        return { ...state, isLoading: true };
+    }
+
+    if (action.type===GET_ALL_JOBS_SUCCESS) {
+        return { ...state, isLoading: false, jobs: action.payload.jobs, totalJobs: action.payload.totalJobs, numOfPages: action.payload.numOfPages };
+    };
+
+    if (action.type === EDIT_JOB) {
+        const job = state.jobs.find(job => job._id === action.payload.id);
+        const { _id, position, company, jobLocation, jobType, status } = job;
+
+        return {
+            ...state,
+            isEditing: true,
+            editJobID: _id,
+            position,
+            company,
+            jobLocation,
+            jobType,
+            status,
+        };
     }
 
     throw new Error(`no such ${action.type}`)

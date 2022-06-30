@@ -8,6 +8,7 @@ const AddNewJob = () => {
     const {
         isLoading,
         isEditing,
+        editJob,
         showAlert,
         displayAlert,
         position,
@@ -31,6 +32,7 @@ const AddNewJob = () => {
         }
 
         if (isEditing) {
+            editJob()
             return;
         }
 

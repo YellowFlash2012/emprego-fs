@@ -24,3 +24,9 @@ export const CLEAR_ADD_JOB_VALUES = "CLEAR_ADD_JOB_VALUES";
 export const ADD_JOB_BEGIN = "ADD_JOB_BEGIN";
 export const ADD_JOB_SUCCESS = "ADD_JOB_SUCCESS";
 export const ADD_JOB_FAIL = "ADD_JOB_FAIL";
+
+export const GET_ALL_JOBS_BEGIN = "GET_ALL_JOBS_BEGIN";
+export const GET_ALL_JOBS_SUCCESS = "GET_ALL_JOBS_SUCCESS";
+export const GET_ALL_JOBS_FAIL = "GET_ALL_JOBS_FAIL";
+
+export const EDIT_JOB = "EDIT_JOB";

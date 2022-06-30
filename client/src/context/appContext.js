@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
 import reducer from "./reducer";
 
 
@@ -18,13 +18,19 @@ const initialState = {
 
     // ***related to job posts***
     isEditing: false,
-    editJobIt: "",
+    editJobID: "",
     position: "",
     company: "",
     jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
     jobType: "full-time",
     statusOptions: ["interview", "pending", "declined"],
-    status:"pending"
+    status: "pending",
+    
+    // ***related to jobs***
+    jobs: [],
+    totalJobs: 0,
+    numOfPages: 1,
+    page:1
 };
 
 const AppContext = React.createContext();
@@ -213,6 +219,44 @@ const AppProvider = ({ children }) => {
         clearAlert()
     };
 
+    const getAllJobs = async () => {
+        dispatch({ type: GET_ALL_JOBS_BEGIN })
+        
+        try {
+            const { data } = await axios.get(
+                "/api/v1/jobs",
+                
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`,
+                    },
+                }
+            );
+
+            const { jobs, totalJobs, numOfPages } = data;
+
+            dispatch({type:GET_ALL_JOBS_SUCCESS, payload:{jobs,totalJobs,numOfPages}})
+        } catch (error) {
+            console.error(error.response);
+
+            if (error.response.status === 401) {
+                logoutUser();
+            }
+
+            message.error(error.response.data.msg);
+
+        }
+        clearAlert()
+    }
+
+    const setEditJob = (id) => {
+        dispatch({ type: EDIT_JOB, payload: { id } });
+    }
+
+    const editJob=(id)=>{}
+
+    const deleteJob=(id)=>{}
+
     return (
         <AppContext.Provider
             value={{
@@ -226,6 +270,10 @@ const AppProvider = ({ children }) => {
                 newJobHandleChange,
                 clearAddJobValues,
                 addNewJob,
+                getAllJobs,
+                editJob,
+                setEditJob,
+                deleteJob
             }}
         >
             {children}
