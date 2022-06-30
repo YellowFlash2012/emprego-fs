@@ -9,7 +9,7 @@ const JobsContainer = () => {
 
     useEffect(() => {
         getAllJobs()
-    }, [getAllJobs]);
+    }, []);
 
     if (isLoading) {
         <Spinner center />;
@@ -26,8 +26,12 @@ const JobsContainer = () => {
             <h5>
                 {totalJobs} job{jobs.length > 1 && "s"} found!
                 
-                {jobs.map(job=><Job key={job._id} {...job} />)}
             </h5>
+
+            <div className="jobs">
+                {jobs.map(job=><Job key={job._id} {...job} />)}
+
+            </div>
             
         </Wrapper>
     );

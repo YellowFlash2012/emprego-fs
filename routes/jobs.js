@@ -3,6 +3,7 @@ import apicache from "apicache";
 import { BadRequestError, UnAuthenticatedError } from "../errors/errors.js";
 import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
+import mongoose from "mongoose";
 
 
 const router = express.Router();
@@ -38,8 +39,29 @@ router.get("/", cache("30 minutes"), async (req, res) => {
 // @route   GET /api/v1/jobs/stats
 // @access  Private
 router.get("/stats", cache("9 minutes"), async (req, res) => {
-    res.send("get all stats")
-})
+    let stats = await Job.aggregate([
+        { $match: { createdBy: mongoose.Types.ObjectId(req.user) } },
+        { $group: { _id: "$status", count: { $sum: 1 } } }
+    ])
+
+    stats = stats.reduce((acc, curr) => {
+        const { _id: status, count } = curr
+
+        acc[status] = count
+
+        return acc;
+    }, {});
+
+    // default stats placeholders for newly registered users
+    const defaultStats = {
+        pending:stats.pending||0,
+        interview:stats.interview||0,
+        declined:stats.declined||0,
+    }
+
+    let monthlyApplications = [];
+    res.status(StatusCodes.OK).send({ defaultStats, monthlyApplications })
+});
 
 // @desc    Get get a single job application
 // @route   GET /api/v1/jobs/:id

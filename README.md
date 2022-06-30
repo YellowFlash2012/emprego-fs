@@ -5,3 +5,4 @@ MERN app to track job application
 - nested routes with rrd v6
 - protecting routes on the be
 - https://mockaroo.com/ for fake data generation
+- how to use mongoose aggregate() to group data in the db by variables of choice
