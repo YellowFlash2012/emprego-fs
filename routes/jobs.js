@@ -5,8 +5,6 @@ import Job from "../models/Job.js";
 import { StatusCodes } from "http-status-codes";
 
 
-
-
 const router = express.Router();
 let cache = apicache.middleware;
 
@@ -31,7 +29,9 @@ router.post("/", async (req, res) => {
 // @route   GET /api/v1/jobs
 // @access  Private
 router.get("/", cache("30 minutes"), async (req, res) => {
-    res.send("get all jobs")
+    const jobs = await Job.find({ createdBy: req.user });
+
+    res.status(StatusCodes.OK).json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 })
 
 // @desc    Get get all stats
