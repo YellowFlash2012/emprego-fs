@@ -1,4 +1,4 @@
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL } from "./actions";
 import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
@@ -65,13 +65,13 @@ const reducer = (state, action) => {
         return { ...state, [action.payload.name]: action.payload.value };
     };
 
-    if (action.type===CLEAR_ADD_JOB_VALUES) {
+    if (action.type === CLEAR_ADD_JOB_VALUES) {
         const initialState = {
             isEditing: false,
             editJobIt: "",
             position: "",
             company: "",
-            jobLocation:state.userLocation,
+            jobLocation: state.userLocation,
             
             jobType: "full-time",
             
@@ -97,11 +97,11 @@ const reducer = (state, action) => {
         return { ...state, isLoading: false };
     }
 
-    if (action.type === GET_ALL_JOBS_BEGIN ) {
+    if (action.type === GET_ALL_JOBS_BEGIN) {
         return { ...state, isLoading: true };
     }
 
-    if (action.type===GET_ALL_JOBS_SUCCESS) {
+    if (action.type === GET_ALL_JOBS_SUCCESS) {
         return { ...state, isLoading: false, jobs: action.payload.jobs, totalJobs: action.payload.totalJobs, numOfPages: action.payload.numOfPages };
     };
 
@@ -119,6 +119,26 @@ const reducer = (state, action) => {
             jobType,
             status,
         };
+    };
+
+    if (action.type === DELETE_JOB) {
+        return { ...state, isLoading: true };
+    }
+
+    if (action.type === EDIT_JOB_BEGIN) {
+        return { ...state, isLoading: true };
+    }
+
+    if (action.type === EDIT_JOB_SUCCESS) {
+        return {
+            ...state,
+            isLoading: false,
+            
+        };
+    }
+
+    if (action.type === EDIT_JOB_FAIL) {
+        return { ...state, isLoading: false };
     }
 
     throw new Error(`no such ${action.type}`)

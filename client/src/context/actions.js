@@ -30,3 +30,9 @@ export const GET_ALL_JOBS_SUCCESS = "GET_ALL_JOBS_SUCCESS";
 export const GET_ALL_JOBS_FAIL = "GET_ALL_JOBS_FAIL";
 
 export const SET_EDIT_JOB = "SET_EDIT_JOB";
+
+export const DELETE_JOB = "DELETE_JOB";
+
+export const EDIT_JOB_BEGIN = "EDIT_JOB_BEGIN";
+export const EDIT_JOB_SUCCESS = "EDIT_JOB_SUCCESS";
+export const EDIT_JOB_FAIL = "EDIT_JOB_FAIL";

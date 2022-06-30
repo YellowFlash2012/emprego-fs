@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import React, { useContext, useReducer} from "react";
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL } from "./actions";
 import reducer from "./reducer";
 
 
@@ -253,9 +253,72 @@ const AppProvider = ({ children }) => {
         dispatch({ type: SET_EDIT_JOB, payload: { id } });
     }
 
-    const editJob=(id)=>{}
+    const editJob = async () => {
+        dispatch({ type: EDIT_JOB_BEGIN });
 
-    const deleteJob=(id)=>{}
+        try {
+            const { position, company, jobLocation, status, jobType } = state;
+
+            const { data } = await axios.put(
+                `/api/v1/jobs/${state.editJobID}`,
+                { position, company, jobLocation, status, jobType },
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`,
+                    },
+                }
+            );
+
+            
+            
+            dispatch({ type: EDIT_JOB_SUCCESS });
+            dispatch({type:CLEAR_ADD_JOB_VALUES})
+
+
+            message.success("Your job was updated!")
+            
+        } catch (error) {
+            console.error(error);
+
+            if (error.response.status === 401) {
+                logoutUser()
+            };
+            
+            dispatch({ type: EDIT_JOB_FAIL, payload: { msg: error.response.data.msg } });
+
+            message.error(error.response.data.msg);
+        };
+        clearAlert()
+    }
+
+    const deleteJob = async (id) => {
+        dispatch({ type: DELETE_JOB })
+        
+        try {
+            const {data} = await axios.delete(
+                `/api/v1/jobs/${id}`,
+                
+                {
+                    headers: {
+                        Authorization: `Bearer ${state.token}`,
+                    },
+                }
+            );
+
+            message.info(data.msg);
+            getAllJobs();
+        } catch (error) {
+            console.error(error.response);
+
+            if (error.response.status === 401) {
+                logoutUser();
+            }
+
+            message.error(error.response.data.msg);
+
+        }
+        clearAlert()
+    }
 
     return (
         <AppContext.Provider
