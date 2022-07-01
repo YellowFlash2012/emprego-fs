@@ -5,11 +5,21 @@ import Wrapper from "../wrappers/JobsContainer"
 import Job from "./Job";
 
 const JobsContainer = () => {
-    const { getAllJobs, jobs, totalJobs, page, isLoading } = useAppContext();
+    const {
+        getAllJobs,
+        jobs,
+        totalJobs,
+        page,
+        isLoading,
+        search,
+        sort,
+        searchType,
+        searchStatus,
+    } = useAppContext();
 
     useEffect(() => {
-        getAllJobs()
-    }, []);
+        getAllJobs();
+    }, [search, sort, searchType, searchStatus]);
 
     if (isLoading) {
         <Spinner center />;

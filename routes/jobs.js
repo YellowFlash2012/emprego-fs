@@ -33,10 +33,48 @@ router.post("/", async (req, res) => {
 // @route   GET /api/v1/jobs
 // @access  Private
 router.get("/", cache("30 minutes"), async (req, res) => {
-    const jobs = await Job.find({ createdBy: req.user });
+    const { status, jobType, sort, search } = req.query;
 
-    res.status(StatusCodes.OK).json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
-})
+    const queryObj = {
+        createdBy: req.user,
+    };
+
+    if (status && status !== "all") {
+        queryObj.status = status;
+    };
+
+    if (jobType && jobType !== "all") {
+        queryObj.jobType = jobType;
+    }
+
+    if (search) {
+        queryObj.position={$regex:search,$option:"i"}
+    }
+
+    let result = Job.find(queryObj);
+
+    // sorting chains
+    if (sort==="latest") {
+        result=result.sort("-createdAt")
+    }
+    if (sort==="oldest") {
+        result=result.sort("createdAt")
+    }
+    if (sort==="a-z") {
+        result=result.sort("-position")
+    }
+    if (sort==="z-a") {
+        result=result.sort("position")
+    }
+
+    const jobs = await result;
+
+    res.status(StatusCodes.OK).json({
+        jobs,
+        totalJobs: jobs.length,
+        numOfPages: 1,
+    });
+});
 
 // @desc    Get get all stats
 // @route   GET /api/v1/jobs/stats

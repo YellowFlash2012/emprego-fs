@@ -5,14 +5,14 @@ import { useAppContext } from "../../context/appContext";
 import Wrapper from "../../wrappers/DashboardFormPage"
 
 const Profile = () => {
-    const { user, showAlert, displayAlert, updateUser, isLoading } = useAppContext();
+    const { user, showAlert, displayAlert, updateUser, isLoading,userLocation } = useAppContext();
 
     console.log(user);
 
     const [name, setName] = useState(user?.name);
     const [email, setEmail] = useState(user?.email);
     const [lastName, setLastName] = useState(user?.lastName);
-    const [location, setLocation] = useState(user?.location);
+    const [location, setLocation] = useState(userLocation);
 
     const updateUserHandler = (e) => {
         e.preventDefault();

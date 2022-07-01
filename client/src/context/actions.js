@@ -40,3 +40,5 @@ export const EDIT_JOB_FAIL = "EDIT_JOB_FAIL";
 
 export const SHOW_STATS_BEGIN = "SHOW_STATS_BEGIN";
 export const SHOW_STATS_SUCCESS = "SHOW_STATS_SUCCESS";
+
+export const CLEAR_FILTERS = "CLEAR_FILTERS";

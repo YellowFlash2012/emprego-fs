@@ -3,7 +3,7 @@ import axios from "axios";
 
 import React, { useContext, useReducer } from "react";
 
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL, SHOW_STATS_BEGIN, SHOW_STATS_SUCCESS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL, SHOW_STATS_BEGIN, SHOW_STATS_SUCCESS, CLEAR_FILTERS } from "./actions";
 
 import reducer from "./reducer";
 
@@ -37,7 +37,14 @@ const initialState = {
     
     // ***related to stats***
     stats: {},
-    monthlyApplications:[]
+    monthlyApplications: [],
+    
+    // ***related to search/sort functionalities
+    search: "",
+    searchStatus: "all",
+    searchType: "all",
+    sort: "latest",
+    sortOptions:["latest","oldest","a-z","z-a"]
 };
 
 const AppContext = React.createContext();
@@ -107,14 +114,14 @@ const AppProvider = ({ children }) => {
         try {
             const {data} = await axios.post("/api/v1/users/login", currentUser);
 
-            const { user, token} = data;
+            const { user, token, location} = data;
 
             dispatch({
                 type: LOGIN_USER_SUCCESS,
-                payload: { user, token },
+                payload: { user, token, location },
             });
 
-            addUserToLS({ user, token });
+            addUserToLS({ user, token,location });
 
             message.success(`Welcome back, ${user.name}`);
 
@@ -228,11 +235,13 @@ const AppProvider = ({ children }) => {
 
     const getAllJobs = async () => {
         dispatch({ type: GET_ALL_JOBS_BEGIN })
+
+        const { search, sort, searchType, searchStatus } = state;
         
         try {
-            const { data } = await axios.get(
-                "/api/v1/jobs",
-                
+            const { data } = await axios.get(search ?
+                `/api/v1/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}&search=${search}`:`/api/v1/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`,
+
                 {
                     headers: {
                         Authorization: `Bearer ${state.token}`,
@@ -361,6 +370,10 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const clearFilters = () => {
+        dispatch({type:CLEAR_FILTERS})
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -379,6 +392,7 @@ const AppProvider = ({ children }) => {
                 setEditJob,
                 deleteJob,
                 getAllStats,
+                clearFilters,
             }}
         >
             {children}
