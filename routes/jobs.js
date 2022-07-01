@@ -48,8 +48,8 @@ router.get("/", cache("30 minutes"), async (req, res) => {
     }
 
     if (search) {
-        queryObj.position={$regex:search,$option:"i"}
-    }
+        queryObj.position = { $regex: search, $option: "i" };
+    };
 
     let result = Job.find(queryObj);
 
@@ -67,12 +67,23 @@ router.get("/", cache("30 minutes"), async (req, res) => {
         result=result.sort("position")
     }
 
+    // pagination
+    const page = +req.query.page || 1;
+    const limit = +req.query.limit || 10;
+
+    const skip = (page - 1) * limit;
+
+    result = result.skip(skip).limit(limit);
+
     const jobs = await result;
+
+    const totalJobs = await Job.countDocuments(queryObj);
+    const numOfPages = Math.ceil(totalJobs / limit);
 
     res.status(StatusCodes.OK).json({
         jobs,
-        totalJobs: jobs.length,
-        numOfPages: 1,
+        totalJobs,
+        numOfPages,
     });
 });
 

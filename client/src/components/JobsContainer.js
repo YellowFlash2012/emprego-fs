@@ -3,6 +3,7 @@ import { useAppContext } from "../context/appContext";
 import Spinner from "./Spinner";
 import Wrapper from "../wrappers/JobsContainer"
 import Job from "./Job";
+import Pagination from "./Pagination";
 
 const JobsContainer = () => {
     const {
@@ -15,11 +16,12 @@ const JobsContainer = () => {
         sort,
         searchType,
         searchStatus,
+        numOfPages
     } = useAppContext();
 
     useEffect(() => {
         getAllJobs();
-    }, [search, sort, searchType, searchStatus]);
+    }, [page, search, sort, searchType, searchStatus]);
 
     if (isLoading) {
         <Spinner center />;
@@ -35,14 +37,15 @@ const JobsContainer = () => {
         <Wrapper>
             <h5>
                 {totalJobs} job{jobs.length > 1 && "s"} found!
-                
             </h5>
 
             <div className="jobs">
-                {jobs.map(job=><Job key={job._id} {...job} />)}
-
+                {jobs.map((job) => (
+                    <Job key={job._id} {...job} />
+                ))}
             </div>
-            
+
+            {numOfPages>1&&<Pagination />}
         </Wrapper>
     );
 };

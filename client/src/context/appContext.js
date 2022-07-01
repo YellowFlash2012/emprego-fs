@@ -3,7 +3,7 @@ import axios from "axios";
 
 import React, { useContext, useReducer } from "react";
 
-import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL, SHOW_STATS_BEGIN, SHOW_STATS_SUCCESS, CLEAR_FILTERS } from "./actions";
+import { ADD_JOB_BEGIN, ADD_JOB_FAIL, ADD_JOB_HANDLE_CHANGE, ADD_JOB_SUCCESS, CLEAR_ADD_JOB_VALUES, CLEAR_ALERT, DISPLAY_ALERT, SET_EDIT_JOB, GET_ALL_JOBS_BEGIN, GET_ALL_JOBS_SUCCESS, LOGIN_USER_BEGIN, LOGIN_USER_FAIL, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_FAIL, REGISTER_USER_SUCCESS, TOGGLE_SIDEBAR, UPDATE_USER_BEGIN, UPDATE_USER_FAIL, UPDATE_USER_SUCCESS, DELETE_JOB, EDIT_JOB_BEGIN, EDIT_JOB_SUCCESS, EDIT_JOB_FAIL, SHOW_STATS_BEGIN, SHOW_STATS_SUCCESS, CLEAR_FILTERS, CHANGE_PAGE } from "./actions";
 
 import reducer from "./reducer";
 
@@ -236,11 +236,13 @@ const AppProvider = ({ children }) => {
     const getAllJobs = async () => {
         dispatch({ type: GET_ALL_JOBS_BEGIN })
 
-        const { search, sort, searchType, searchStatus } = state;
+        const { page, search, sort, searchType, searchStatus } = state;
         
         try {
-            const { data } = await axios.get(search ?
-                `/api/v1/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}&search=${search}`:`/api/v1/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`,
+            const { data } = await axios.get(
+                search
+                    ? `/api/v1/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}&search=${search}`
+                    : `/api/v1/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`,
 
                 {
                     headers: {
@@ -374,6 +376,10 @@ const AppProvider = ({ children }) => {
         dispatch({type:CLEAR_FILTERS})
     }
 
+    const changePage = (page) => {
+        dispatch({type:CHANGE_PAGE, payload:{page}})
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -393,6 +399,7 @@ const AppProvider = ({ children }) => {
                 deleteJob,
                 getAllStats,
                 clearFilters,
+                changePage,
             }}
         >
             {children}

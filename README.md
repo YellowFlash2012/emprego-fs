@@ -1,5 +1,7 @@
 # emprego-fs
-MERN app to track job application
+MERN app to track job applications
+
+<a href="https://empregofs.herokuapp.com/">Live preview</a>
 
 # key learning points
 - nested routes with rrd v6
