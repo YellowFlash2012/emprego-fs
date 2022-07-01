@@ -146,7 +146,7 @@ const reducer = (state, action) => {
     }
 
     if (action.type === SHOW_STATS_SUCCESS) {
-        return { ...state, isLoading: false, stats: action.payload.defaultStats, monthlyApplications: action.payload.monthlyApplications }
+        return { ...state, isLoading: false, stats: action.payload.stats, monthlyApplications: action.payload.monthlyApplications }
     }
 
     throw new Error(`no such ${action.type}`)

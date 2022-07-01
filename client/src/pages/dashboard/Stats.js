@@ -8,18 +8,19 @@ const Stats = () => {
     const { getAllStats, isLoading, monthlyApplications } = useAppContext();
 
     useEffect(() => {
-      getAllStats()
-    }, [])
+        getAllStats();
+    }, []);
 
     if (isLoading) {
-        return <Spinner center />
+        return <Spinner center />;
     }
-    
-    return <div>
-        <StatsContainer />
 
-        {monthlyApplications>0&&<ChartsContainer/>}
-        
-    </div>;
+    return (
+        <div>
+            <StatsContainer />
+
+            {monthlyApplications.length > 0 && <ChartsContainer />}
+        </div>
+    );
 };
 export default Stats;
