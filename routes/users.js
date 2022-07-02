@@ -1,5 +1,13 @@
 import express from "express"
-import {StatusCodes} from "http-status-codes"
+import { StatusCodes } from "http-status-codes"
+import rateLimiter from "express-rate-limit"
+
+const apiLimiter = rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: "Too many requests from this IP address"
+});
+
 import { BadRequestError, UnAuthenticatedError } from "../errors/errors.js";
 import protect from "../middleware/auth.js";
 import User from "../models/User.js";
@@ -7,7 +15,7 @@ import User from "../models/User.js";
 const router = express.Router();
 
 
-router.post("/", async (req, res) => {
+router.post("/", apiLimiter, async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
@@ -36,7 +44,7 @@ router.post("/", async (req, res) => {
     });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", apiLimiter, async (req, res) => {
     const { email, password } = req.body;
 
     if (!email||!password) {

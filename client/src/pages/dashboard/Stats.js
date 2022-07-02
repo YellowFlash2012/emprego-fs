@@ -9,6 +9,7 @@ const Stats = () => {
 
     useEffect(() => {
         getAllStats();
+        // eslint-disable-next-line
     }, []);
 
     if (isLoading) {

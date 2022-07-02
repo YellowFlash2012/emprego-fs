@@ -102,6 +102,16 @@ const AppProvider = ({ children }) => {
         } catch (error) {
             console.log(error.response);
 
+            // to prevent brute force attacks
+            if (error.response.status === 429) {
+                dispatch({
+                    type: REGISTER_USER_FAIL,
+                    payload: { msg: "Too many requests, please try later" },
+                });
+                message.error("Too many requests, please try later");
+                return;
+            }
+
             dispatch({ type: REGISTER_USER_FAIL, payload: { msg: error.response.data.msg } });
 
             message.error(error.response.data.msg);
@@ -130,6 +140,16 @@ const AppProvider = ({ children }) => {
             }, 5000);
         } catch (error) {
             console.log(error.response);
+
+            // to prevent brute force attacks
+            if (error.response.status === 429) {
+                dispatch({
+                    type: LOGIN_USER_FAIL,
+                    payload: { msg: "Too many requests, please try later" },
+                });
+                message.error("Too many requests, please try later");
+                return;
+            }
 
             dispatch({
                 type: LOGIN_USER_FAIL,

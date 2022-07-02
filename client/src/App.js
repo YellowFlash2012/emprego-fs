@@ -4,7 +4,7 @@ import Error from "./pages/Error";
 import Register from "./pages/Register";
 
 import "antd/dist/antd.min.css";
-import Dashboard from "./pages/Dashboard";
+
 import Stats from "./pages/dashboard/Stats";
 import AllJobs from "./pages/dashboard/AllJobs";
 import AddNewJob from "./pages/dashboard/AddNewJob";
